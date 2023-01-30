@@ -1,0 +1,51 @@
+package com.ihsan.thewatcher.adapter
+
+import android.content.Intent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.ihsan.thewatcher.DetailMovieActivity
+import com.ihsan.thewatcher.R
+import com.ihsan.thewatcher.models.Movie
+import kotlinx.android.synthetic.main.movie_item.view.*
+
+class MovieAdapter (
+    private val movies : List<Movie>
+    ): RecyclerView.Adapter<MovieAdapter.MovieViewHolder>(){
+        class MovieViewHolder(view: View) : RecyclerView.ViewHolder(view){
+            private val IMAGE_BASE = "https://image.tmdb.org/t/p/w500/"
+            fun bindMovie(movie: Movie){
+                itemView.movie_title.text = movie.title
+                itemView.movie_release.text = movie.releaseDate
+                itemView.movie_popularity.text = movie.popularity
+                itemView.movie_average.text = movie.voteAverage
+                Glide.with(itemView).load(IMAGE_BASE + movie.poster).into(itemView.movie_poster)
+            }
+        }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
+        return MovieViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.movie_item, parent, false)
+        )
+    }
+
+    override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
+        val movie = movies[position]
+        holder.bindMovie(movies.get(position))
+
+        holder.itemView.setOnClickListener {
+            moveToMoviesDetail(movie, it)
+        }
+    }
+
+    override fun getItemCount(): Int = movies.size
+
+    private fun moveToMoviesDetail(movie: Movie, it: View){
+        val detailMoviesIntent = Intent(it.context, DetailMovieActivity::class.java)
+        detailMoviesIntent.putExtra(DetailMovieActivity.EXTRA_MOVIES, movie)
+        it.context.startActivity(detailMoviesIntent)
+    }
+
+    }
